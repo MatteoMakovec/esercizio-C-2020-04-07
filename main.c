@@ -30,7 +30,7 @@ typedef struct{
 } phrase;
 
 int random_positioning(int max);
-void swap_word(phrase *phrase, int position);
+void swap_word(phrase *phrase, int position, int i);
 
 
 int main(int argc, char *argv[]) {
@@ -56,17 +56,17 @@ int main(int argc, char *argv[]) {
     words[position-1].word = token;
     words[position-1].size = sizeof(token) / sizeof(char);
     position++;
-		str = realloc(str, (counter+1) * sizeof(char));
+		words = realloc(words, position * sizeof(phrase));
     token = strtok(NULL, s);
   }
-  
+
 	for(int i=0; i<position; i++){
-		swap_word(words, position);
+		swap_word(words, position, i);
 	} 
 
-  for(int i=0; i<position-1; i++){
+  for(int i=0; i<position; i++){
     printf("%d: %s\n", i, words[i].word);
-  }
+	} 
 
 	return 0;
 }
@@ -79,11 +79,25 @@ int random_positioning(int max){
 	return random_number;
 }
 
-void swap_word(phrase *line, int position) {      
-// NON FUNZIONA LA RANDOMIZZAZIONE DELL'ORDINE DELLE PAROLE
-  for(int i=0; i<position; i++){
-    char *word = line[i].word;
-    line[i].word = line[random_positioning(position)].word;
-    line[random_positioning(position)].word = word;
-  }
+void swap_word(phrase *line, int position, int i) {      
+// FUNZIONA MA HO UN PO' IMBROGLIATO, DA MIGLIORARE!!
+/*int validate = 0;
+  int *verify = calloc(position, sizeof(int));
+  int count = 0;
+
+  while(count < position){
+    int rand = random_positioning(position);
+    if (verify[rand] == 0){
+      verify[rand] = 1;
+      if(line[rand].word != NULL){
+        printf("%s\n", line[rand].word);
+      }
+    }
+    count++;
+  }*/
+  char *word = calloc(line[i].size, sizeof(char));
+  int random = random_positioning(position);
+  strcpy(word, line[i].word);
+  strcpy(line[i].word, line[random].word);
+  strcpy(line[random].word, word); 
 }
