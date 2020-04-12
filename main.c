@@ -26,34 +26,64 @@
 
 typedef struct{
 	char *word;
+  int size;
 } phrase;
 
 int random_positioning(int max);
-void swap_word(phrase *phrase, int *position);
+void swap_word(phrase *phrase, int position);
+
 
 int main(int argc, char *argv[]) {
-	phrase *line;
-	scanf("Inserire la frase da randomizzare", &line);		//ERRORE NEL SALVATAGGIO DELLA FRASE LETTA
-	int length = sizeof(phrase)/sizeof(char);
-	for(int i=0; i<length; i++){
-		swap_word(line, random_positioning(random_positioning));
+  char * str= calloc(1, sizeof(char));
+	char c;
+	int counter = 0;
+
+  printf("Scrivi la frase da randomizzare:  ");
+
+	while ((c=getchar()) != '\n'){
+		str[counter] = c;
+		counter++;
+		str = realloc(str, (counter+1) * sizeof(char));
 	}
+
+  char s[] = " .,;";
+  char *token;
+  int position = 1;
+  phrase *words = calloc(position, sizeof(phrase));
+
+  token = strtok(str, s);
+  while (token != NULL ) {
+    words[position-1].word = token;
+    words[position-1].size = sizeof(token) / sizeof(char);
+    position++;
+		str = realloc(str, (counter+1) * sizeof(char));
+    token = strtok(NULL, s);
+  }
+  
+	for(int i=0; i<position; i++){
+		swap_word(words, position);
+	} 
+
+  for(int i=0; i<position-1; i++){
+    printf("%d: %s\n", i, words[i].word);
+  }
 
 	return 0;
 }
 
+
 int random_positioning(int max){
 	time_t t = time(NULL);
 	srand(t);
-	int size = 2;
-	int *random_number = calloc(size, sizeof(int));
-	random_number[0] = rand() % max;
-	random_number[1] = rand() % max;
+	int random_number = rand() % max;
 	return random_number;
 }
 
-void swap_word(phrase *line, int *position) {
-	char *word = line[position[0]].word;
-	line[position[0]].word = line[position[1]].word;
-	line[position[1]].word = word;
+void swap_word(phrase *line, int position) {      
+// NON FUNZIONA LA RANDOMIZZAZIONE DELL'ORDINE DELLE PAROLE
+  for(int i=0; i<position; i++){
+    char *word = line[i].word;
+    line[i].word = line[random_positioning(position)].word;
+    line[random_positioning(position)].word = word;
+  }
 }
