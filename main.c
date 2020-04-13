@@ -18,86 +18,67 @@
 //output:
 //"mi stringhe chiamo pino sono date world delle hello"
 
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <time.h>
 
-typedef struct{
-	char *word;
-  int size;
-} phrase;
+#define MAX_LENGTH 50
 
-int random_positioning(int max);
-void swap_word(phrase *phrase, int position, int i);
+int *random_array(int count) {
+    int *array = calloc(count, sizeof(int));
+    if(array == NULL) {
+        printf("\ncalloc error!\n");
+        exit(EXIT_FAILURE);
+    }
 
+    for (int i = 0; i < count; i++) {
+        int random = rand() % count;
+        array[i] = random;
+        for (int j = 0; j < i; j++) {
+            if (array[i] == array[j]) {
+                i--;
+                break;
+            }
+        }
+    }
+    return array;
+}
 
 int main(int argc, char *argv[]) {
-  char * str= calloc(1, sizeof(char));
+	char *line= calloc(1, sizeof(char));
 	char c;
 	int counter = 0;
 
-  printf("Scrivi la frase da randomizzare:  ");
+	printf("Scrivi la frase da randomizzare:  ");
 
-	while ((c=getchar()) != '\n'){
-		str[counter] = c;
+	while ((c=getchar()) != '\n') {
+		line[counter] = c;
 		counter++;
-		str = realloc(str, (counter+1) * sizeof(char));
+		line = realloc(line, (counter+1) * sizeof(char));
 	}
 
-  char s[] = " .,;";
-  char *token;
-  int position = 1;
-  phrase *words = calloc(position, sizeof(phrase));
-
-  token = strtok(str, s);
-  while (token != NULL ) {
-    words[position-1].word = token;
-    words[position-1].size = sizeof(token) / sizeof(char);
-    position++;
-		words = realloc(words, position * sizeof(phrase));
-    token = strtok(NULL, s);
-  }
-
-	for(int i=0; i<position; i++){
-		swap_word(words, position, i);
-	} 
-
-  for(int i=0; i<position; i++){
-    printf("%d: %s\n", i, words[i].word);
-	} 
-
-	return 0;
-}
-
-
-int random_positioning(int max){
-	time_t t = time(NULL);
-	srand(t);
-	int random_number = rand() % max;
-	return random_number;
-}
-
-void swap_word(phrase *line, int position, int i) {      
-// FUNZIONA MA HO UN PO' IMBROGLIATO, DA MIGLIORARE!!
-/*int validate = 0;
-  int *verify = calloc(position, sizeof(int));
-  int count = 0;
-
-  while(count < position){
-    int rand = random_positioning(position);
-    if (verify[rand] == 0){
-      verify[rand] = 1;
-      if(line[rand].word != NULL){
-        printf("%s\n", line[rand].word);
-      }
+    char separatori[] = " ";
+    char *token;
+    char *new_line[MAX_LENGTH];
+    token = strtok(line, separatori);
+    new_line[0] = token;
+    int count = 0;
+    while (token != NULL) {
+        token = strtok(NULL, separatori);
+        count++;
+        new_line[count] = token;
     }
-    count++;
-  }*/
-  char *word = calloc(line[i].size, sizeof(char));
-  int random = random_positioning(position);
-  strcpy(word, line[i].word);
-  strcpy(line[i].word, line[random].word);
-  strcpy(line[random].word, word); 
+
+    printf("Il numero di parole rilevate nella frase inserita sono: %d\n\n", count);
+
+    int *random_order = random_array(count);
+    for (int i = 0; i < count; i++) {
+        int index = random_order[i];
+        printf("%s ", new_line[index]);
+    }
+
+    free(random_order);
+
+    return 0;
 }
